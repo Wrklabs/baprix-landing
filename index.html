@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baprix — Ton épicerie, optimisée.</title>
+  <meta name="description" content="Baprix compare les prix des grandes bannières québécoises et te génère une liste d'épicerie optimisée. Chaque semaine, automatiquement.">
+  <meta property="og:title" content="Baprix — Ton épicerie, optimisée.">
+  <meta property="og:description" content="Arrête de payer trop cher à l'épicerie. Baprix compare les prix et optimise ta liste.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://baprix.ca">
+  <meta property="og:image" content="https://baprix.ca/og-baprix.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Baprix — Ton épicerie, optimisée.">
+  <meta name="twitter:description" content="Arrête de payer trop cher à l'épicerie. Baprix compare les prix et optimise ta liste.">
+  <meta name="twitter:image" content="https://baprix.ca/og-baprix.png">
+  <meta name="theme-color" content="#2A7A4B">
+  <link rel="icon" type="image/png" href="logo_baprix_vertpanierrond.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sauge: #2A7A4B;
+      --sauge-hover: #237040;
+      --menthe: #A8E6C3;
+      --vert-pale: #E2F0E8;
+      --creme: #F0EDE6;
+      --charbon: #2D2D2D;
+      --noir: #1E1E1C;
+      --blanc: #FFFFFF;
+      --gris-texte: #6B6860;
+      --gris-leger: #B5B1A9;
+      --border: #DDD9D1;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--charbon);
+      background: var(--creme);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s cubic-bezier(0.23, 1, 0.32, 1), transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ==================== NAV ==================== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.35s, box-shadow 0.35s;
+    }
+    .nav.scrolled {
+      background: rgba(240, 237, 230, 0.88);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+    .nav-logo { height: 38px; }
+    .nav-cta {
+      font-family: inherit; font-size: 13.5px; font-weight: 600;
+      background: var(--sauge); color: var(--blanc);
+      padding: 9px 20px; border: none; border-radius: 10px;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: var(--sauge-hover); transform: translateY(-1px); }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      background: var(--creme);
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 110px 24px 72px;
+      position: relative;
+    }
+
+    .hero-inner {
+      max-width: 640px; text-align: center; position: relative; z-index: 1;
+    }
+
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--vert-pale); color: var(--sauge);
+      font-size: 12.5px; font-weight: 600; letter-spacing: 0.03em;
+      padding: 7px 14px; border-radius: 8px; margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.5s 0.1s forwards;
+    }
+    .hero-pill-dot {
+      width: 6px; height: 6px; background: var(--sauge); border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 5.8vw, 52px); font-weight: 700;
+      line-height: 1.08; color: var(--noir); letter-spacing: -0.025em;
+      margin-bottom: 18px;
+      opacity: 0; animation: fadeUp 0.55s 0.2s forwards;
+    }
+    .hero h1 .accent { color: var(--sauge); }
+
+    .hero-sub {
+      font-size: clamp(15.5px, 2.2vw, 18px); line-height: 1.55;
+      color: var(--gris-texte); max-width: 520px; margin: 0 auto 32px;
+      opacity: 0; animation: fadeUp 0.55s 0.32s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==================== EMAIL FORM ==================== */
+    .email-form {
+      display: flex; gap: 8px; max-width: 440px; margin: 0 auto;
+      opacity: 0; animation: fadeUp 0.55s 0.44s forwards;
+    }
+    .cta-section .email-form { opacity: 1; animation: none; }
+
+    .email-form input[type="email"] {
+      flex: 1; padding: 14px 18px;
+      font-family: inherit; font-size: 15px;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      background: var(--blanc); color: var(--charbon); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .email-form input::placeholder { color: var(--gris-leger); }
+    .email-form input:focus {
+      border-color: var(--sauge);
+      box-shadow: 0 0 0 3px rgba(42,122,75,0.08);
+    }
+    .email-form button {
+      padding: 14px 24px; font-family: inherit; font-size: 15px; font-weight: 600;
+      background: var(--sauge); color: var(--blanc);
+      border: none; border-radius: 12px; cursor: pointer; white-space: nowrap;
+      transition: background 0.2s, transform 0.12s, box-shadow 0.2s;
+    }
+    .email-form button:hover {
+      background: var(--sauge-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(42,122,75,0.2);
+    }
+    .email-form button:active { transform: translateY(0); }
+
+    .form-note {
+      font-size: 12.5px; color: var(--gris-leger); margin-top: 14px;
+      opacity: 0; animation: fadeUp 0.55s 0.52s forwards;
+    }
+    .form-message { margin-top: 10px; font-size: 14px; font-weight: 500; min-height: 22px; }
+    .form-message.success { color: var(--sauge); }
+    .form-message.error { color: #c0392b; }
+    .form-message.info { color: #b8860b; }
+
+    .btn-loading { pointer-events: none; opacity: 0.75; }
+    .btn-loading::after {
+      content: ''; display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+      border-radius: 50%; margin-left: 8px; vertical-align: middle;
+      animation: spin 0.55s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ==================== STAT ==================== */
+    .stat-section {
+      background: var(--vert-pale); padding: 64px 24px; text-align: center;
+    }
+    .stat-wrap { max-width: 560px; margin: 0 auto; }
+    .stat-number {
+      font-size: clamp(44px, 8vw, 72px); font-weight: 700;
+      color: var(--sauge); letter-spacing: -0.03em; line-height: 1;
+    }
+    .stat-text {
+      font-size: clamp(16px, 2.5vw, 20px); color: var(--noir);
+      line-height: 1.45; margin-top: 10px; font-weight: 400;
+    }
+    .stat-text strong { font-weight: 600; }
+    .stat-note { font-size: 12.5px; color: #7a8e7f; margin-top: 10px; }
+
+    /* ==================== HOW ==================== */
+    .how-section { background: var(--creme); padding: 80px 24px; }
+
+    .section-eyebrow {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--sauge); text-align: center;
+      margin-bottom: 8px;
+    }
+    .section-heading {
+      font-size: clamp(24px, 4.2vw, 36px); font-weight: 700;
+      color: var(--noir); text-align: center; letter-spacing: -0.015em;
+      margin-bottom: 48px;
+    }
+
+    .steps {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; max-width: 880px; margin: 0 auto;
+    }
+
+    .step {
+      background: var(--blanc); border-radius: 16px; padding: 28px 24px;
+      border: 1px solid rgba(0,0,0,0.04);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .step:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(42,122,75,0.07);
+    }
+
+    .step-num {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--vert-pale); color: var(--sauge);
+      font-size: 15px; font-weight: 700; border-radius: 10px;
+      margin-bottom: 18px;
+    }
+
+    .step h3 {
+      font-size: 17px; font-weight: 700; color: var(--noir); margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 14.5px; line-height: 1.55; color: var(--gris-texte);
+    }
+
+    /* ==================== IMBATTABLES ==================== */
+    .imbattables-section {
+      background: var(--vert-pale); padding: 80px 24px; overflow: hidden;
+    }
+
+    .imb-layout {
+      max-width: 880px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+      align-items: center;
+    }
+
+    .imb-content {}
+    .imb-eyebrow {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--sauge); margin-bottom: 8px;
+    }
+    .imb-heading {
+      font-size: clamp(22px, 3.5vw, 32px); font-weight: 700;
+      color: var(--noir); letter-spacing: -0.015em; line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .imb-desc {
+      font-size: 15px; line-height: 1.6; color: var(--gris-texte);
+      margin-bottom: 20px;
+    }
+
+    .imb-checklist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .imb-check {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--charbon); line-height: 1.45;
+    }
+    .imb-check-icon {
+      width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px;
+      background: var(--sauge); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .imb-check-icon::after {
+      content: ''; width: 5px; height: 9px;
+      border: solid #fff; border-width: 0 2px 2px 0;
+      transform: rotate(45deg); margin-top: -1px;
+    }
+
+    /* Mini mockup for imbattables */
+    .imb-visual {
+      display: flex; justify-content: center;
+    }
+    .imb-phone {
+      width: 240px; background: #1a1a1a; border-radius: 34px; padding: 9px;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.12);
+    }
+    .imb-phone-inner {
+      background: #FAFAF8; border-radius: 26px; overflow: hidden;
+      aspect-ratio: 9/16;
+    }
+    .imb-screen-head {
+      background: var(--sauge); padding: 0 16px 14px;
+    }
+    .imb-screen-title { font-size: 14px; font-weight: 700; color: #fff; margin-top: 2px; }
+    .imb-screen-sub { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+    .imb-banner {
+      margin: 10px 12px 0; padding: 10px 12px;
+      background: linear-gradient(135deg, #E31837 0%, #c0142e 100%);
+      border-radius: 10px; color: #fff;
+    }
+    .imb-banner-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.8; }
+    .imb-banner-title { font-size: 14px; font-weight: 700; margin-top: 2px; }
+    .imb-banner-sub { font-size: 10px; opacity: 0.7; margin-top: 1px; }
+
+    .imb-item {
+      display: flex; align-items: center; gap: 8px; padding: 7px 12px;
+    }
+    .imb-item + .imb-item { border-top: 1px solid #F0EDEA; }
+    .imb-item-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .imb-item-info { flex: 1; min-width: 0; }
+    .imb-item-name { font-size: 11px; font-weight: 500; color: var(--noir); }
+    .imb-item-origin { font-size: 9.5px; color: var(--gris-leger); }
+    .imb-item-prices { text-align: right; flex-shrink: 0; }
+    .imb-item-maxi { font-size: 12px; font-weight: 700; color: var(--sauge); }
+    .imb-item-other { font-size: 9.5px; color: var(--gris-leger); text-decoration: line-through; }
+
+    .imb-total {
+      margin: 8px 12px 0; padding: 9px 12px;
+      background: var(--vert-pale); border-radius: 9px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .imb-total-label { font-size: 10.5px; color: var(--gris-texte); font-weight: 500; }
+    .imb-total-saved { font-size: 14px; font-weight: 700; color: var(--sauge); }
+
+    @media (max-width: 768px) {
+      .imb-layout { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+      .imb-checklist { align-items: center; }
+      .imb-visual { order: -1; }
+      .imb-phone { width: 220px; }
+      .imbattables-section { padding: 60px 20px; }
+    }
+
+    /* ==================== APP PREVIEW ==================== */
+    .preview-section {
+      background: var(--sauge); padding: 80px 24px 88px;
+      position: relative; overflow: hidden;
+    }
+    .preview-section .section-eyebrow { color: var(--menthe); }
+    .preview-section .section-heading { color: var(--blanc); }
+
+    .phones {
+      display: flex; justify-content: center; align-items: flex-start;
+      gap: 20px; max-width: 860px; margin: 0 auto; position: relative; z-index: 1;
+    }
+
+    .phone {
+      width: 252px; flex-shrink: 0;
+      background: #1a1a1a; border-radius: 36px; padding: 10px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .phone:nth-child(2) { margin-top: 28px; }
+
+    .phone-inner {
+      background: #FAFAF8; border-radius: 28px; overflow: hidden;
+      aspect-ratio: 9/17.5;
+    }
+
+    /* -- Status Bar -- */
+    .ph-status {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 18px 4px; font-size: 11px; font-weight: 600; color: #fff;
+    }
+    .ph-status.dark { color: var(--charbon); }
+    .ph-status-r { display: flex; gap: 4px; align-items: center; }
+    .ph-bat {
+      width: 18px; height: 9px; border: 1.2px solid currentColor; border-radius: 2.5px;
+      position: relative;
+    }
+    .ph-bat::before {
+      content: ''; position: absolute; left: 2px; top: 2px; bottom: 2px; right: 30%;
+      background: currentColor; border-radius: 1px;
+    }
+    .ph-bat::after {
+      content: ''; position: absolute; right: -3.5px; top: 2px;
+      width: 2px; height: 5px; background: currentColor; border-radius: 0 1px 1px 0;
+    }
+    .ph-sig {
+      display: flex; align-items: flex-end; gap: 1.2px; height: 9px;
+    }
+    .ph-sig span {
+      width: 2.5px; background: currentColor; border-radius: 1px;
+    }
+    .ph-sig span:nth-child(1) { height: 3px; }
+    .ph-sig span:nth-child(2) { height: 5px; }
+    .ph-sig span:nth-child(3) { height: 7px; }
+    .ph-sig span:nth-child(4) { height: 9px; }
+
+    /* -- Dashboard Screen -- */
+    .scr-dash .ph-head { background: var(--sauge); padding: 0 18px 16px; }
+    .scr-dash .ph-greeting { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+    .scr-dash .ph-name { font-size: 18px; font-weight: 700; color: #fff; margin-top: 1px; }
+
+    .savings-card {
+      margin: -14px 14px 0; padding: 16px;
+      background: var(--blanc); border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      position: relative; z-index: 2;
+    }
+    .savings-top { display: flex; align-items: baseline; justify-content: space-between; }
+    .savings-label { font-size: 11px; color: var(--gris-texte); font-weight: 500; }
+    .savings-badge {
+      font-size: 9.5px; font-weight: 600; color: var(--sauge);
+      background: var(--vert-pale); padding: 3px 7px; border-radius: 5px;
+    }
+    .savings-amount {
+      font-size: 32px; font-weight: 700; color: var(--sauge);
+      letter-spacing: -0.03em; margin-top: 4px; line-height: 1;
+    }
+    .savings-compare { font-size: 10.5px; color: var(--gris-leger); margin-top: 4px; }
+
+    .savings-bar-track {
+      height: 5px; background: var(--vert-pale); border-radius: 3px;
+      margin-top: 12px; overflow: hidden;
+    }
+    .savings-bar-fill { height: 100%; width: 68%; background: var(--sauge); border-radius: 3px; }
+    .savings-bar-labels {
+      display: flex; justify-content: space-between;
+      font-size: 9.5px; color: var(--gris-leger); margin-top: 4px;
+    }
+
+    .scr-dash .section-lbl {
+      font-size: 11.5px; font-weight: 600; color: var(--noir); padding: 16px 14px 8px;
+    }
+
+    .deal-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+    }
+    .deal-row + .deal-row { border-top: 1px solid #F0EDEA; }
+    .deal-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+    .di-blue { background: #EBF0FF; }
+    .di-red { background: #FFEFEB; }
+    .di-yellow { background: #FFF5E6; }
+    .di-warm { background: #FFF8EB; }
+    .deal-info { flex: 1; min-width: 0; }
+    .deal-name { font-size: 12px; font-weight: 500; color: var(--noir); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .deal-store { font-size: 10px; color: var(--gris-leger); margin-top: 1px; }
+    .deal-prices { text-align: right; flex-shrink: 0; }
+    .deal-now { font-size: 13px; font-weight: 700; color: var(--sauge); }
+    .deal-was { font-size: 10px; color: var(--gris-leger); text-decoration: line-through; }
+
+    /* -- List Screen -- */
+    .scr-list .list-head { background: var(--sauge); padding: 0 18px 16px; }
+    .scr-list .list-title { font-size: 15px; font-weight: 700; color: #fff; margin-top: 2px; }
+    .scr-list .list-meta { font-size: 10.5px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+    .list-tabs {
+      display: flex; margin: 10px 14px 0; border-radius: 9px; overflow: hidden;
+      background: #F0EDEA;
+    }
+    .list-tab {
+      flex: 1; text-align: center; padding: 7px 0;
+      font-size: 10.5px; font-weight: 600; color: var(--gris-texte);
+    }
+    .list-tab.active { background: var(--sauge); color: #fff; border-radius: 8px; }
+
+    .store-group { padding: 12px 14px 0; }
+    .store-group-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .store-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .store-dot.maxi { background: #E31837; }
+    .store-dot.iga { background: #D52B1E; }
+    .store-group-name { font-size: 11px; font-weight: 600; color: var(--noir); }
+    .store-group-count { font-size: 10px; color: var(--gris-leger); }
+
+    .list-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; }
+    .list-item + .list-item { border-top: 1px solid #F0EDEA; }
+    .list-cb {
+      width: 18px; height: 18px; border: 1.5px solid var(--border);
+      border-radius: 5px; flex-shrink: 0; position: relative;
+    }
+    .list-cb.done { background: var(--sauge); border-color: var(--sauge); }
+    .list-cb.done::after {
+      content: ''; position: absolute; top: 3px; left: 5.5px;
+      width: 4.5px; height: 8px;
+      border: solid #fff; border-width: 0 1.8px 1.8px 0;
+      transform: rotate(45deg);
+    }
+    .list-text { font-size: 12px; color: var(--charbon); flex: 1; }
+    .list-text.done { text-decoration: line-through; color: var(--gris-leger); }
+    .list-price { font-size: 11px; font-weight: 600; color: var(--gris-texte); flex-shrink: 0; }
+
+    .list-total-bar {
+      margin: 10px 14px 0; padding: 10px 14px;
+      background: var(--vert-pale); border-radius: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .list-total-label { font-size: 11px; font-weight: 500; color: var(--gris-texte); }
+    .list-total-amount { font-size: 15px; font-weight: 700; color: var(--sauge); }
+
+    /* -- Compare Screen -- */
+    .scr-cmp .cmp-head { background: var(--blanc); padding: 0 18px 12px; border-bottom: 1px solid #F0EDEA; }
+    .scr-cmp .cmp-title { font-size: 15px; font-weight: 700; color: var(--noir); margin-top: 2px; }
+
+    .cmp-search {
+      margin: 10px 14px 0; padding: 9px 12px;
+      background: #F5F3EF; border-radius: 10px;
+      font-size: 11.5px; color: var(--gris-leger);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cmp-search svg { flex-shrink: 0; }
+
+    .cmp-card {
+      margin: 10px 14px 0; background: var(--blanc);
+      border: 1px solid #ECEAE5; border-radius: 12px; overflow: hidden;
+    }
+    .cmp-card + .cmp-card { margin-top: 8px; }
+    .cmp-card-head {
+      padding: 10px 12px; display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid #F0EDEA;
+    }
+    .cmp-card-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .cmp-card-name { font-size: 12.5px; font-weight: 600; color: var(--noir); }
+    .cmp-card-size { font-size: 10px; color: var(--gris-leger); }
+
+    .cmp-row {
+      display: flex; align-items: center; padding: 8px 12px;
+      border-bottom: 1px solid #F8F7F5;
+    }
+    .cmp-row:last-child { border-bottom: none; }
+    .cmp-row.best { background: rgba(42,122,75,0.03); }
+    .cmp-store-name {
+      font-size: 11.5px; color: var(--charbon); flex: 1;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .cmp-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .cd-maxi { background: #E31837; }
+    .cd-iga { background: #D52B1E; }
+    .cd-metro { background: #003DA5; }
+    .cd-sc { background: #FF6600; }
+    .cd-wm { background: #0071CE; }
+    .cmp-price { font-size: 12px; font-weight: 600; color: var(--charbon); flex-shrink: 0; }
+    .cmp-price.best-price { color: var(--sauge); font-weight: 700; }
+    .cmp-tag {
+      font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+      color: var(--sauge); background: var(--vert-pale);
+      padding: 2px 5px; border-radius: 3px; margin-left: 6px;
+    }
+
+    /* ==================== FINAL CTA ==================== */
+    .cta-section {
+      background: var(--creme); padding: 80px 24px; text-align: center;
+    }
+    .cta-section .section-heading { margin-bottom: 6px; }
+    .cta-sub { font-size: 16px; color: var(--gris-texte); margin-bottom: 32px; }
+
+    /* ==================== FOOTER ==================== */
+    .footer {
+      background: var(--noir); padding: 40px 24px 32px; text-align: center;
+    }
+    .footer-logo { height: 36px; margin-bottom: 14px; opacity: 0.85; }
+    .footer-corp { font-size: 12.5px; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-links {
+      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .footer-links a {
+      font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.55);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--menthe); }
+    .footer-email { font-size: 13px; }
+    .footer-email a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    .footer-email a:hover { color: var(--menthe); }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .nav-cta { display: none; }
+      .hero { min-height: auto; padding: 96px 20px 56px; }
+      .email-form { flex-direction: column; }
+      .email-form button { width: 100%; }
+      .steps { grid-template-columns: 1fr; max-width: 380px; }
+      .phones { flex-direction: column; align-items: center; gap: 18px; }
+      .phone { width: 240px; }
+      .phone:nth-child(2) { margin-top: 0; }
+      .phone:nth-child(3) { display: none; }
+      .stat-section { padding: 52px 20px; }
+      .how-section, .preview-section, .cta-section { padding: 60px 20px; }
+    }
+    @media (max-width: 440px) {
+      .phone { width: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <img src="logo_baprix_vertpanier.png" alt="baprix" class="nav-logo">
+  <a href="#hero-form" class="nav-cta">Rejoindre la liste</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-pill">
+      <span class="hero-pill-dot"></span>
+      Bientôt disponible au Québec
+    </div>
+    <h1>Arrête de payer<br><span class="accent">trop cher</span> à l'épicerie.</h1>
+    <p class="hero-sub">Baprix compare les prix des grandes bannières québécoises et te génère une liste d'épicerie optimisée. Chaque semaine, automatiquement.</p>
+    <form class="email-form" id="hero-form" onsubmit="return handleSubmit(event, this)">
+      <input type="email" placeholder="ton@email.com" required autocomplete="email" aria-label="Adresse courriel">
+      <button type="submit">Rejoindre</button>
+    </form>
+    <p class="form-note">Gratuit. Aucun spam. On t'écrit juste quand c'est prêt.</p>
+    <div class="form-message" id="hero-msg"></div>
+  </div>
+</section>
+
+<section class="stat-section">
+  <div class="stat-wrap reveal">
+    <div class="stat-number">200$</div>
+    <p class="stat-text">Les familles québécoises dépensent en moyenne <strong>200$ de trop</strong> par mois à l'épicerie.</p>
+    <p class="stat-note">En comparant les prix entre les bannières, chaque semaine.</p>
+  </div>
+</section>
+
+<section class="how-section">
+  <p class="section-eyebrow reveal">Comment ça marche</p>
+  <h2 class="section-heading reveal">Trois étapes. Zéro effort.</h2>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <h3>Crée ton profil</h3>
+      <p>Dis-nous combien vous êtes, vos préférences alimentaires, et quelles épiceries sont proches de chez toi.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <h3>On optimise ta liste</h3>
+      <p>Baprix analyse les circulaires en temps réel et assigne chaque produit à la bannière la moins chère cette semaine.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <h3>Tu économises</h3>
+      <p>Fais ton épicerie avec ta liste optimisée. Économise 150 à 200$ par mois sans effort.</p>
+    </div>
+  </div>
+</section>
+
+<section class="imbattables-section">
+  <div class="imb-layout">
+    <div class="imb-content reveal">
+      <p class="imb-eyebrow">Politique imbattables</p>
+      <h2 class="imb-heading">Maxi égale les prix des compétiteurs. Baprix le fait pour toi.</h2>
+      <p class="imb-desc">La politique Imbattables de Maxi te permet d'obtenir le prix annoncé chez IGA, Metro ou Super C, directement à la caisse. Le problème : personne n'a le temps d'éplucher toutes les circulaires chaque semaine.</p>
+      <ul class="imb-checklist">
+        <li class="imb-check">
+          <span class="imb-check-icon"></span>
+          <span>Baprix identifie automatiquement les produits admissibles chaque semaine</span>
+        </li>
+        <li class="imb-check">
+          <span class="imb-check-icon"></span>
+          <span>On te génère une liste prête à présenter à la caisse chez Maxi</span>
+        </li>
+        <li class="imb-check">
+          <span class="imb-check-icon"></span>
+          <span>Un seul arrêt, les meilleurs prix de toutes les bannières</span>
+        </li>
+      </ul>
+    </div>
+    <div class="imb-visual reveal">
+      <div class="imb-phone">
+        <div class="imb-phone-inner">
+          <div class="imb-screen-head">
+            <div class="ph-status" style="padding:8px 0 4px;">
+              <span>9:41</span>
+              <div class="ph-status-r">
+                <div class="ph-sig"><span></span><span></span><span></span><span></span></div>
+                <div class="ph-bat"></div>
+              </div>
+            </div>
+            <p class="imb-screen-title">Imbattables Maxi</p>
+            <p class="imb-screen-sub">Semaine du 14 avril · 8 items trouvés</p>
+          </div>
+          <div class="imb-banner">
+            <div class="imb-banner-label">Politique Maxi</div>
+            <div class="imb-banner-title">Imbattables de la semaine</div>
+            <div class="imb-banner-sub">Présente cette liste à la caisse</div>
+          </div>
+          <div class="imb-item">
+            <div class="imb-item-icon di-blue">🥛</div>
+            <div class="imb-item-info">
+              <div class="imb-item-name">Lait 2% Natrel 2L</div>
+              <div class="imb-item-origin">Égal. prix Super C</div>
+            </div>
+            <div class="imb-item-prices">
+              <div class="imb-item-maxi">4,29$</div>
+              <div class="imb-item-other">5,49$</div>
+            </div>
+          </div>
+          <div class="imb-item">
+            <div class="imb-item-icon di-warm">🧀</div>
+            <div class="imb-item-info">
+              <div class="imb-item-name">Cheddar Black Diamond 400g</div>
+              <div class="imb-item-origin">Égal. prix IGA</div>
+            </div>
+            <div class="imb-item-prices">
+              <div class="imb-item-maxi">4,99$</div>
+              <div class="imb-item-other">6,99$</div>
+            </div>
+          </div>
+          <div class="imb-item">
+            <div class="imb-item-icon di-red">🥩</div>
+            <div class="imb-item-info">
+              <div class="imb-item-name">Bœuf haché mi-maigre 1lb</div>
+              <div class="imb-item-origin">Égal. prix Metro</div>
+            </div>
+            <div class="imb-item-prices">
+              <div class="imb-item-maxi">5,99$</div>
+              <div class="imb-item-other">7,99$</div>
+            </div>
+          </div>
+          <div class="imb-item">
+            <div class="imb-item-icon di-yellow">🥣</div>
+            <div class="imb-item-info">
+              <div class="imb-item-name">Céréales Cheerios 430g</div>
+              <div class="imb-item-origin">Égal. prix Super C</div>
+            </div>
+            <div class="imb-item-prices">
+              <div class="imb-item-maxi">3,49$</div>
+              <div class="imb-item-other">4,99$</div>
+            </div>
+          </div>
+          <div class="imb-total">
+            <span class="imb-total-label">Économie totale cette semaine</span>
+            <span class="imb-total-saved">-18,70$</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="preview-section">
+  <p class="section-eyebrow reveal">Aperçu</p>
+  <h2 class="section-heading reveal">L'app qui fait le travail pour toi.</h2>
+  <div class="phones reveal">
+
+    <!-- PHONE 1 : Dashboard -->
+    <div class="phone">
+      <div class="phone-inner scr-dash">
+        <div class="ph-head">
+          <div class="ph-status">
+            <span>9:41</span>
+            <div class="ph-status-r">
+              <div class="ph-sig"><span></span><span></span><span></span><span></span></div>
+              <div class="ph-bat"></div>
+            </div>
+          </div>
+          <div style="padding: 4px 0 0;">
+            <p class="ph-greeting">Bonjour,</p>
+            <p class="ph-name">Marie-Eve</p>
+          </div>
+        </div>
+        <div class="savings-card">
+          <div class="savings-top">
+            <span class="savings-label">Économie cette semaine</span>
+            <span class="savings-badge">Sem. 16</span>
+          </div>
+          <div class="savings-amount">47,82$</div>
+          <p class="savings-compare">vs prix régulier chez Metro</p>
+          <div class="savings-bar-track"><div class="savings-bar-fill"></div></div>
+          <div class="savings-bar-labels"><span>0$</span><span>Objectif 70$</span></div>
+        </div>
+        <div class="section-lbl">Top rabais de la semaine</div>
+        <div class="deal-row">
+          <div class="deal-icon di-blue">🥛</div>
+          <div class="deal-info">
+            <div class="deal-name">Lait 2% Natrel 2L</div>
+            <div class="deal-store">Maxi · Imbattable</div>
+          </div>
+          <div class="deal-prices"><div class="deal-now">4,29$</div><div class="deal-was">5,49$</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-icon di-red">🍗</div>
+          <div class="deal-info">
+            <div class="deal-name">Hauts de cuisse Exceldor</div>
+            <div class="deal-store">Super C · Circulaire</div>
+          </div>
+          <div class="deal-prices"><div class="deal-now">8,99$</div><div class="deal-was">13,49$</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-icon di-yellow">🍌</div>
+          <div class="deal-info">
+            <div class="deal-name">Bananes Dole</div>
+            <div class="deal-store">Maxi · Prix régulier</div>
+          </div>
+          <div class="deal-prices"><div class="deal-now">0,69$/lb</div><div class="deal-was">0,79$</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-icon di-warm">🍞</div>
+          <div class="deal-info">
+            <div class="deal-name">Pain St-Méthode 600g</div>
+            <div class="deal-store">IGA · Circulaire</div>
+          </div>
+          <div class="deal-prices"><div class="deal-now">3,49$</div><div class="deal-was">4,99$</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 2 : Liste -->
+    <div class="phone">
+      <div class="phone-inner scr-list">
+        <div class="list-head">
+          <div class="ph-status">
+            <span>9:41</span>
+            <div class="ph-status-r">
+              <div class="ph-sig"><span></span><span></span><span></span><span></span></div>
+              <div class="ph-bat"></div>
+            </div>
+          </div>
+          <div style="padding: 4px 0 0;">
+            <p class="list-title">Ma liste</p>
+            <p class="list-meta">Semaine du 14 avril · 23 items · 3 bannières</p>
+          </div>
+        </div>
+        <div class="list-tabs">
+          <div class="list-tab active">Par magasin</div>
+          <div class="list-tab">Tout</div>
+          <div class="list-tab">Achetés</div>
+        </div>
+        <div class="store-group">
+          <div class="store-group-head">
+            <span class="store-dot maxi"></span>
+            <span class="store-group-name">Maxi</span>
+            <span class="store-group-count">· 12 items</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb done"></div>
+            <span class="list-text done">Lait 2% Natrel 2L</span>
+            <span class="list-price">4,29$</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb done"></div>
+            <span class="list-text done">Beurre Lactantia 454g</span>
+            <span class="list-price">4,49$</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb"></div>
+            <span class="list-text">Oeufs bruns gros cal. dz</span>
+            <span class="list-price">3,79$</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb"></div>
+            <span class="list-text">Cheddar P'tit Quebec 400g</span>
+            <span class="list-price">5,49$</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb"></div>
+            <span class="list-text">Bananes Dole ~2lb</span>
+            <span class="list-price">1,38$</span>
+          </div>
+        </div>
+        <div class="store-group">
+          <div class="store-group-head">
+            <span class="store-dot iga"></span>
+            <span class="store-group-name">IGA</span>
+            <span class="store-group-count">· 7 items</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb"></div>
+            <span class="list-text">Pain St-Méthode 600g</span>
+            <span class="list-price">3,49$</span>
+          </div>
+          <div class="list-item">
+            <div class="list-cb"></div>
+            <span class="list-text">Yogourt Oikos 4x100g</span>
+            <span class="list-price">4,49$</span>
+          </div>
+        </div>
+        <div class="list-total-bar">
+          <span class="list-total-label">Total estimé</span>
+          <span class="list-total-amount">87,40$</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 3 : Compare -->
+    <div class="phone">
+      <div class="phone-inner scr-cmp">
+        <div class="cmp-head">
+          <div class="ph-status dark">
+            <span>9:41</span>
+            <div class="ph-status-r" style="color:var(--charbon);">
+              <div class="ph-sig"><span></span><span></span><span></span><span></span></div>
+              <div class="ph-bat"></div>
+            </div>
+          </div>
+          <div style="padding: 4px 0 0;">
+            <p class="cmp-title">Comparer</p>
+          </div>
+        </div>
+        <div class="cmp-search">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#B5B1A9" stroke-width="1.5"/><line x1="9.5" y1="9.5" x2="12.5" y2="12.5" stroke="#B5B1A9" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Rechercher un produit...
+        </div>
+
+        <div class="cmp-card">
+          <div class="cmp-card-head">
+            <div class="cmp-card-icon di-blue">🥛</div>
+            <div><div class="cmp-card-name">Lait 2% Natrel</div><div class="cmp-card-size">2 litres</div></div>
+          </div>
+          <div class="cmp-row best">
+            <span class="cmp-store-name"><span class="cmp-dot cd-maxi"></span> Maxi</span>
+            <span class="cmp-price best-price">4,29$<span class="cmp-tag">Imbattable</span></span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-sc"></span> Super C</span>
+            <span class="cmp-price">4,79$</span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-iga"></span> IGA</span>
+            <span class="cmp-price">5,29$</span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-metro"></span> Metro</span>
+            <span class="cmp-price">5,49$</span>
+          </div>
+        </div>
+
+        <div class="cmp-card">
+          <div class="cmp-card-head">
+            <div class="cmp-card-icon di-red">🍗</div>
+            <div><div class="cmp-card-name">Hauts de cuisse Exceldor</div><div class="cmp-card-size">Format famille 1,2 kg</div></div>
+          </div>
+          <div class="cmp-row best">
+            <span class="cmp-store-name"><span class="cmp-dot cd-sc"></span> Super C</span>
+            <span class="cmp-price best-price">8,99$<span class="cmp-tag">Meilleur prix</span></span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-maxi"></span> Maxi</span>
+            <span class="cmp-price">10,49$</span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-wm"></span> Walmart</span>
+            <span class="cmp-price">11,97$</span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-iga"></span> IGA</span>
+            <span class="cmp-price">13,49$</span>
+          </div>
+        </div>
+
+        <div class="cmp-card">
+          <div class="cmp-card-head">
+            <div class="cmp-card-icon di-warm">🥚</div>
+            <div><div class="cmp-card-name">Oeufs bruns gros calibre</div><div class="cmp-card-size">Douzaine</div></div>
+          </div>
+          <div class="cmp-row best">
+            <span class="cmp-store-name"><span class="cmp-dot cd-maxi"></span> Maxi</span>
+            <span class="cmp-price best-price">3,79$<span class="cmp-tag">Imbattable</span></span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-wm"></span> Walmart</span>
+            <span class="cmp-price">3,97$</span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-store-name"><span class="cmp-dot cd-metro"></span> Metro</span>
+            <span class="cmp-price">4,79$</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="reveal">
+    <h2 class="section-heading">Sois parmi les premiers à essayer Baprix.</h2>
+    <p class="cta-sub">Inscription gratuite. On te contacte dès que c'est prêt.</p>
+    <form class="email-form" id="cta-form" onsubmit="return handleSubmit(event, this)">
+      <input type="email" placeholder="ton@email.com" required autocomplete="email" aria-label="Adresse courriel">
+      <button type="submit">Rejoindre la liste d'attente</button>
+    </form>
+    <div class="form-message" id="cta-msg"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <img src="logo_baprix_vertpanier.png" alt="baprix" class="footer-logo">
+  <p class="footer-corp">Un produit de Technologies Wrklabs inc.</p>
+  <div class="footer-links">
+    <a href="https://instagram.com/baprix.app" target="_blank" rel="noopener">Instagram @baprix.app</a>
+    <a href="https://tiktok.com/@baprixapp" target="_blank" rel="noopener">TikTok @baprixapp</a>
+    <a href="https://www.facebook.com/profile.php?id=61568754683848" target="_blank" rel="noopener">Facebook</a>
+  </div>
+  <p class="footer-email"><a href="mailto:info@baprix.ca">info@baprix.ca</a></p>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Replace before deploying
+  const SUPABASE_URL = 'https://zcvmwgaqvynmpqeodbpe.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjdm13Z2FxdnlubXBxZW9kYnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDc0NDQsImV4cCI6MjA4OTUyMzQ0NH0.3F3YOM_UxMgMJtJcoiu4OhOIXf6mwBR00Q_IrpiVRtM';
+
+  async function handleSubmit(e, form) {
+    e.preventDefault();
+    const input = form.querySelector('input[type="email"]');
+    const email = input.value.trim().toLowerCase();
+    const btn = form.querySelector('button');
+    const msgEl = document.getElementById(form.id === 'hero-form' ? 'hero-msg' : 'cta-msg');
+
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      msgEl.textContent = 'Entre une adresse courriel valide.';
+      msgEl.className = 'form-message error';
+      return false;
+    }
+
+    btn.classList.add('btn-loading'); btn.disabled = true;
+    let success = false;
+
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) {
+        msgEl.textContent = 'Merci! On te contacte bientôt.';
+        msgEl.className = 'form-message success';
+        input.value = ''; input.disabled = true;
+        btn.textContent = 'Inscrit ✓'; btn.style.background = '#237040';
+        success = true;
+      } else if (res.status === 409) {
+        msgEl.textContent = 'Tu es déjà sur la liste!';
+        msgEl.className = 'form-message info';
+      } else { throw new Error('HTTP ' + res.status); }
+    } catch (err) {
+      console.error('Waitlist error:', err);
+      msgEl.textContent = 'Oups, une erreur est survenue. Réessaie!';
+      msgEl.className = 'form-message error';
+    } finally {
+      btn.classList.remove('btn-loading');
+      if (!success) { btn.disabled = false; }
+    }
+    return false;
+  }
+</script>
+</body>
+</html>
